@@ -52,10 +52,15 @@ return {
           node_decremental = '<bs>',
         },
       },
+      context_commentstring = {
+        enable = true,
+        enable_autocmd = false,
+      },
     },
     ---@param opts TSConfig
     config = function(_, opts)
-      if type(opts.ensure_installed) == 'table' then
+      local ensure_installed = opts.ensure_installed
+      if type(ensure_installed) == 'table' then
         ---@type table<string, boolean>
         local added = {}
         opts.ensure_installed = vim.tbl_filter(function(lang)
@@ -64,11 +69,12 @@ return {
           end
           added[lang] = true
           return true
-        end, opts.ensure_installed)
+        end, ensure_installed)
       end
       require('nvim-treesitter.configs').setup(opts)
     end,
   },
+
   {
     'nvim-treesitter/nvim-treesitter-textobjects',
     lazy = true,
