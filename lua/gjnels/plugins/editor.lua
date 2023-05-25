@@ -297,11 +297,22 @@ return {
   -- remove buffers
   {
     'echasnovski/mini.bufremove',
-  -- stylua: ignore
-  keys = {
-    { "<leader>bd", function() require("mini.bufremove").delete(0, false) end, desc = "Delete Buffer" },
-    { "<leader>bD", function() require("mini.bufremove").delete(0, true) end, desc = "Delete Buffer (Force)" },
-  },
+    keys = {
+      {
+        '<leader>bd',
+        function()
+          require('mini.bufremove').delete(0, false)
+        end,
+        desc = 'Delete Buffer',
+      },
+      {
+        '<leader>bD',
+        function()
+          require('mini.bufremove').delete(0, true)
+        end,
+        desc = 'Delete Buffer (Force)',
+      },
+    },
   },
 
   -- better diagnostics
@@ -345,14 +356,72 @@ return {
     cmd = { 'TodoTrouble', 'TodoTelescope' },
     event = { 'BufReadPost', 'BufNewFile' },
     config = true,
-  -- stylua: ignore
-  keys = {
-    { "]t", function() require("todo-comments").jump_next() end, desc = "Next todo comment" },
-    { "[t", function() require("todo-comments").jump_prev() end, desc = "Previous todo comment" },
-    { "<leader>xt", "<cmd>TodoTrouble<cr>", desc = "Todo (Trouble)" },
-    { "<leader>xT", "<cmd>TodoTrouble keywords=TODO,FIX,FIXME<cr>", desc = "Todo/Fix/Fixme (Trouble)" },
-    { "<leader>st", "<cmd>TodoTelescope<cr>", desc = "Todo" },
-    { "<leader>sT", "<cmd>TodoTelescope keywords=TODO,FIX,FIXME<cr>", desc = "Todo/Fix/Fixme" },
+    keys = {
+      {
+        ']t',
+        function()
+          require('todo-comments').jump_next()
+        end,
+        desc = 'Next todo comment',
+      },
+      {
+        '[t',
+        function()
+          require('todo-comments').jump_prev()
+        end,
+        desc = 'Previous todo comment',
+      },
+      { '<leader>xt', '<cmd>TodoTrouble<cr>', desc = 'Todo (Trouble)' },
+      { '<leader>xT', '<cmd>TodoTrouble keywords=TODO,FIX,FIXME<cr>', desc = 'Todo/Fix/Fixme (Trouble)' },
+      { '<leader>st', '<cmd>TodoTelescope<cr>', desc = 'Todo' },
+      { '<leader>sT', '<cmd>TodoTelescope keywords=TODO,FIX,FIXME<cr>', desc = 'Todo/Fix/Fixme' },
+    },
   },
+
+  -- search/replace in multiple files
+  {
+    'nvim-pack/nvim-spectre',
+    keys = {
+      {
+        '<leader>sr',
+        function()
+          require('spectre').open()
+        end,
+        desc = 'Replace in files (Spectre)',
+      },
+    },
+  },
+
+  -- jump to any location and enhanced f/t motions for Leap
+  {
+    'ggandor/flit.nvim',
+    keys = function()
+      ---@type LazyKeys[]
+      local ret = {}
+      for _, key in ipairs({ 'f', 'F', 't', 'T' }) do
+        ret[#ret + 1] = { key, mode = { 'n', 'x', 'o' }, desc = key }
+      end
+      return ret
+    end,
+    opts = { labeled_modes = 'nx' },
+  },
+
+  -- better jumping
+  {
+    'ggandor/leap.nvim',
+    keys = {
+      { 's', mode = { 'n', 'x', 'o' }, desc = 'Leap forward to' },
+      { 'S', mode = { 'n', 'x', 'o' }, desc = 'Leap backward to' },
+      { 'gs', mode = { 'n', 'x', 'o' }, desc = 'Leap from windows' },
+    },
+    config = function(_, opts)
+      local leap = require('leap')
+      for k, v in pairs(opts) do
+        leap.opts[k] = v
+      end
+      leap.add_default_mappings(true)
+      vim.keymap.del({ 'x', 'o' }, 'x')
+      vim.keymap.del({ 'x', 'o' }, 'X')
+    end,
   },
 }
