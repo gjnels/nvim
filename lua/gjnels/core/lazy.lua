@@ -16,6 +16,7 @@ require('lazy').setup({
   spec = {
     { import = 'gjnels.core.resources' },
     { import = 'gjnels.plugins' },
+    { import = 'gjnels.plugins.extras' },
   },
   defaults = {
     lazy = false, -- lazy-loading off by default

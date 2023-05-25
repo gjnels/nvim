@@ -7,9 +7,32 @@ return {
       { 'folke/neodev.nvim', opts = {} },
       'williamboman/mason.nvim',
       'williamboman/mason-lspconfig.nvim',
+      'jose-elias-alvarez/typescript.nvim',
     },
     opts = {
       autoformat = true,
+      setup = {
+        tsserver = function(_, opts)
+          require('gjnels.utils').on_attach(function(client, buffer)
+            if client.name == 'tsserver' then
+              vim.keymap.set(
+                'n',
+                '<leader>co',
+                '<cmd>TypescriptOrganizeImports<CR>',
+                { buffer = buffer, desc = 'Organize Imports' }
+              )
+              vim.keymap.set(
+                'n',
+                '<leader>cR',
+                '<cmd>TypescriptRenameFile<CR>',
+                { desc = 'Rename File', buffer = buffer }
+              )
+            end
+          end)
+          require('typescript').setup({ server = opts })
+          return true
+        end,
+      },
     },
     config = function(_, opts)
       -- setup auto-format
@@ -29,9 +52,20 @@ return {
         if servers[server] and servers[server].disabled then
           return
         end
+
         local server_opts = vim.tbl_deep_extend('force', {
           capabilities = vim.deepcopy(capabilities),
         }, servers[server] or {})
+
+        if opts.setup[server] then
+          if opts.setup[server](server, server_opts) then
+            return
+          end
+        elseif opts.setup['*'] then
+          if opts.setup['*'](server, server_opts) then
+            return
+          end
+        end
         require('lspconfig')[server].setup(server_opts)
       end
 
@@ -56,8 +90,7 @@ return {
       end
 
       if have_mason then
-        mlsp.setup({ ensure_installed = ensure_installed })
-        mlsp.setup_handlers({ setup })
+        mlsp.setup({ ensure_installed = ensure_installed, handlers = { setup } })
       end
     end,
   },
@@ -92,7 +125,7 @@ return {
         sources = {
           formatting.prettierd,
           formatting.stylua,
-          formatting.beautysh.with({ extra_args = { '--indent-size', '2' } }),
+          formatting.beautysh,
         },
       })
     end,
