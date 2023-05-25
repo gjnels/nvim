@@ -80,7 +80,7 @@ return {
     config = function(_, opts)
       require('mini.ai').setup(opts)
       -- register all text objects with which-key
-      if require('gjnels.util').has('which-key.nvim') then
+      if require('gjnels.utils').has('which-key.nvim') then
         ---@type table<string, string|table>
         local i = {
           [' '] = 'Whitespace',
