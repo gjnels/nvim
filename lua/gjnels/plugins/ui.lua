@@ -12,11 +12,6 @@ return {
       },
     },
     opts = {
-      icons = {
-        ERROR = ' ',
-        INFO = ' ',
-        WARN = ' ',
-      },
       timeout = 3000,
       max_height = function()
         return math.floor(vim.o.lines * 0.75)
@@ -82,5 +77,13 @@ return {
         end,
       })
     end,
+  },
+
+  -- noicer looking ui
+  {
+    'folke/noice.nvim',
+    event = 'VeryLazy',
+    opts = require('gjnels.config.noice.opts'),
+    keys = require('gjnels.config.noice.keys'),
   },
 }
