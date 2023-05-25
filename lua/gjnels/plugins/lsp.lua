@@ -56,7 +56,6 @@ return {
         local server_opts = vim.tbl_deep_extend('force', {
           capabilities = vim.deepcopy(capabilities),
         }, servers[server] or {})
-
         if opts.setup[server] then
           if opts.setup[server](server, server_opts) then
             return
@@ -123,7 +122,9 @@ return {
       null_ls.setup({
         debug = false,
         sources = {
-          formatting.prettierd,
+          formatting.prettierd.with({
+            extra_filetypes = { 'svelte' },
+          }),
           formatting.stylua,
           formatting.beautysh,
         },
